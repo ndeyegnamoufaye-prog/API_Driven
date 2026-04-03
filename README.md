@@ -217,9 +217,12 @@ Réponse :
 {"instanceId": "i-xxxx", "state": "running"}
 Endpoints publics
 
-µ---------------------------------------------------
-Start  → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/start 
-Stop   → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/stop  Status → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/status
+---------------------------------------------------
+Start  → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/start
+
+Stop   → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/stop  
+
+Status → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/status
 
 ---------------------------------------------------
 Evaluation
