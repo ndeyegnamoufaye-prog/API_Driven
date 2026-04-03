@@ -75,19 +75,23 @@ Piloter une instance EC2 via API Gateway et une fonction Lambda, dans un environ
 Un compte GitHub avec accès aux Codespaces
 Un compte LocalStack (version Pro ou snooze activé)
 Python 3.11 (disponible par défaut dans les Codespaces)
+
 ---------------------------------------------------
 Installation de l'environnement
 1. Démarrer LocalStack
    LOCALSTACK_ACKNOWLEDGE_ACCOUNT_REQUIREMENT=1 localstack start -d
    Le -d lance LocalStack en arrière-plan (mode daemon)
+
    ---------------------------------------------------
    2. Vérifier que LocalStack tourne
       localstack status services
       Tous les services doivent afficher available
-      ---------------------------------------------------
+
+       ---------------------------------------------------
       3.Installer l'AWS CLI
 pip install awscli --break-system-packages
-      ---------------------------------------------------
+
+       ---------------------------------------------------
       4. Configurer les credentials AWS (factices pour LocalStack)
          aws configure
          Renseigner les valeurs suivantes :
@@ -95,6 +99,7 @@ AWS Access Key ID     : test
 AWS Secret Access Key : test
 Default region name   : us-east-1
 Default output format : json
+
          ---------------------------------------------------
          5. Exposer le port 4566
 Dans l'onglet PORTS de VS Code (GitHub Codespaces) :
@@ -103,6 +108,7 @@ Saisir 4566 et appuyer sur Entrée
 Clic droit sur le port → Visibilité du port → Public
 L'URL publique ressemblera à :
 https://<nom-du-codespace>-4566.app.github.dev
+
             ---------------------------------------------------
             Déploiement pas à pas
 Étape 1 — Créer l'instance EC2
@@ -118,7 +124,8 @@ aws --endpoint-url=http://localhost:4566 ec2 describe-instances \
   --region us-east-1 \
   --query 'Reservations[0].Instances[0].State.Name'
 Résultat attendu : "running"
-             ---------------------------------------------------
+
+            ---------------------------------------------------
             Étape 2 — Créer la fonction Lambda
 Créer le fichier lambda_function.py :
 import boto3
@@ -153,13 +160,15 @@ if path == '/start':
         'statusCode': 200,
         'body': json.dumps({'message': message, 'instanceId': instance_id})
     }
-             ---------------------------------------------------
+
+            ---------------------------------------------------
             Étape 3 — Créer l'API Gateway
 Créer l'API :
 aws --endpoint-url=http://localhost:4566 apigateway create-rest-api \
   --name "ec2-api" \
   --region us-east-1
 Noter l'id (API_ID) et le rootResourceId retournés
+
             ---------------------------------------------------
             Créer les 3 ressources /start, /stop, /status :
 for ROUTE in start stop status; do
@@ -207,9 +216,11 @@ curl -X POST https://<CODESPACE_URL>/restapis/<API_ID>/prod/_user_request_/statu
 Réponse :
 {"instanceId": "i-xxxx", "state": "running"}
 Endpoints publics
----------------------------------------------------
+
+µ---------------------------------------------------
 Start  → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/start 
 Stop   → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/stop  Status → https://upgraded-happiness-v6x77jrj9r593x6v9-4566.app.github.dev/restapis/kqf8ly3sti/prod/_user_request_/status
+
 ---------------------------------------------------
 Evaluation
 ---------------------------------------------------
