@@ -129,19 +129,22 @@ Résultat attendu : "running"
             Étape 2 — Créer la fonction Lambda
 Créer le fichier lambda_function.py :
 import boto3
-import json
+import json 
+
 def lambda_handler(event, context):
     ec2 = boto3.client(
         'ec2',
         region_name='us-east-1',
         endpoint_url='http://localhost.localstack.cloud:4566'
     )
+    
 instance_id = '<INSTANCE_ID>'  # Remplacer par votre InstanceId
     path = event.get('path', '')
 if path == '/start':
         ec2.start_instances(InstanceIds=[instance_id])
         message = f'Instance {instance_id} démarrée'
     elif path == '/stop':
+    
         ec2.stop_instances(InstanceIds=[instance_id])
         message = f'Instance {instance_id} stoppée'
     elif path == '/status':
@@ -151,6 +154,7 @@ if path == '/start':
             'statusCode': 200,
             'body': json.dumps({'instanceId': instance_id, 'state': state})
         }
+        
     else:
         return {
             'statusCode': 400,
@@ -178,6 +182,8 @@ for ROUTE in start stop status; do
     --path-part $ROUTE \
     --region us-east-1
 done
+
+---------------------------------------------------
 Attacher la méthode POST et l'intégration Lambda sur chaque ressource :
 for RESOURCE_ID in <ID_START> <ID_STOP> <ID_STATUS>; do
   aws --endpoint-url=http://localhost:4566 apigateway put-method \
@@ -186,7 +192,8 @@ for RESOURCE_ID in <ID_START> <ID_STOP> <ID_STATUS>; do
     --http-method POST \
     --authorization-type NONE \
     --region us-east-1
-
+    
+---------------------------------------------------
   aws --endpoint-url=http://localhost:4566 apigateway put-integration \
     --rest-api-id <API_ID> \
     --resource-id $RESOURCE_ID \
@@ -196,23 +203,33 @@ for RESOURCE_ID in <ID_START> <ID_STOP> <ID_STATUS>; do
     --uri arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:000000000000:function:ec2-controller/invocations \
     --region us-east-1
 done
+
+---------------------------------------------------
 Déployer l'API :
 aws --endpoint-url=http://localhost:4566 apigateway create-deployment \
   --rest-api-id <API_ID> \
   --stage-name prod \
   --region us-east-1
+
+  ---------------------------------------------------
   Utilisation de l'API
   Les 3 endpoints s'utilisent avec une requête HTTP POST :
+  
 Démarrer l'instance
 curl -X POST https://<CODESPACE_URL>/restapis/<API_ID>/prod/_user_request_/start
+
 Réponse :
 {"message": "Instance i-xxxx démarrée", "instanceId": "i-xxxx"}
+
 Stopper l'instance
 curl -X POST https://<CODESPACE_URL>/restapis/<API_ID>/prod/_user_request_/stop
+
 Réponse :
 {"message": "Instance i-xxxx stoppée", "instanceId": "i-xxxx"}
+
 Vérifier le statut
 curl -X POST https://<CODESPACE_URL>/restapis/<API_ID>/prod/_user_request_/status
+
 Réponse :
 {"instanceId": "i-xxxx", "state": "running"}
 Endpoints publics
